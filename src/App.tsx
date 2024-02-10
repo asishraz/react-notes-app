@@ -1,5 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import './App.css';
+import api from './api';
+
 
 type Note = {
   id: number;
@@ -7,12 +9,32 @@ type Note = {
   content: string;
 }
 
+api.get('/some-endpoint')
+  .then(response => {
+    // Handle the response
+  })
+  .catch(error => {
+    // Handle errors
+  });
+
 const App = () => {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [notes, setNotes] = useState<Note[]>([]);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+  useEffect(() => {
+    // Make an API request to fetch notes
+    api.get('/notes')
+      .then(response => {
+        // Handle the response
+        setNotes(response.data);
+      })
+      .catch(error => {
+        // Handle errors
+        console.error('Error fetching notes:', error);
+      });
+  }, []);
     // {
     //   id: 1,
     //   title: "test note 1",
