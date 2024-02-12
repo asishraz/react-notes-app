@@ -3,18 +3,30 @@ import json
 
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Note
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+
+from rest_framework import generics
+from .serializers import NoteSerializer
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 
+class NoteListCreateView(generics.ListCreateAPIView):
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer
+
+class NoteDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer
+
+@api_view(['POST'])
 def save_note(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        title = data.get('title')
-        description = data.get('description')
-        Note.objects.create(title=title, description=description)
-        return redirect('note_list')  # Redirect to the note list view
-    else:
-        return HttpResponse('Invalid request method!')
+        serializer = NoteSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
 
 
 def note_list(request):

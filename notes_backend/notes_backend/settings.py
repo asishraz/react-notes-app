@@ -45,7 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'rest_framework',
     'notes',
+
 ]
 
 MIDDLEWARE = [
@@ -122,7 +124,6 @@ USE_I18N = True
 USE_TZ = True
 
 APPEND_SLASH = True
-
 
 
 # Static files (CSS, JavaScript, Images)

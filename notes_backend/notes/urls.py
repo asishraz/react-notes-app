@@ -1,9 +1,9 @@
 # notes/urls.py
 from django.urls import path, include
-from .views import save_note, note_list, note_detail
+from .views import save_note, NoteListCreateView, NoteDetailView
 
 urlpatterns = [
-    path('save_note/', save_note, name='save_note'),
-    path('', note_list, name='note_list'),
-    path('note_detail/<int:note_id>/', note_detail, name='note_detail'),
+    path('notes/', NoteListCreateView.as_view(), name='note_list'),
+    path('notes/<int:pk>/', NoteDetailView.as_view(), name='note_detail'),
+    path('notes/save_note/', save_note, name='save_note'),
 ]
