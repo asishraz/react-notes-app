@@ -3,6 +3,7 @@ import './App.css';
 import { api } from './api.js';
 
 type Note = {
+  id: number;
   title: string;
   content: string;
 };
@@ -32,7 +33,8 @@ const App = () => {
 
     try {
       const response = await api.post('notes/', newNote);
-      setNotes([response.data, ...notes]);
+      setNotes((prevNotes) => [response.data, ...prevNotes]);
+      // setNotes([response.data, ...notes]);
       setTitle("");
       setContent("");
     } catch (error) {
@@ -76,12 +78,12 @@ const App = () => {
     setSelectedNote(null);
   };
 
-  const deleteNote = async (event: React.MouseEvent, noteId: number) => {
+  const deleteNote = async (event: React.MouseEvent, note:Note) => {
     event.stopPropagation();
 
     try {
-      await api.delete(`notes/${noteToDelete.id}/`);
-      setNotes(notes.filter((note) => note.id !== noteToDelete.id));
+      await api.delete(`notes/${note.id}/`);
+      setNotes(notes.filter((n) => n.id !== note.id));
     } catch (error) {
       console.error('Error deleting note:', error);
     }
