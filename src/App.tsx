@@ -1,6 +1,9 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import './App.css';
 import { api } from './api.js';
+import { AxiosError } from 'axios';
+import axios from 'axios';
+
 
 type Note = {
   id: number;
@@ -16,12 +19,14 @@ const App = () => {
 
   const fetchNotes = async () => {
     try {
-      const response = await api.get('notes/');
-      setNotes(response.data);
+        console.log('Fetching notes...');
+        const response = await api.get('notes/');
+        console.log('Fetched notes:', response.data);
+        setNotes(response.data);
     } catch (error) {
-      console.error('Error fetching notes:', error);
+        console.error('Error fetching notes:', error);
     }
-  };
+};
 
   const handleAddNote = useCallback(async (event: React.FormEvent) => {
     event.preventDefault();
@@ -30,6 +35,9 @@ const App = () => {
       title: title,
       content: content,
     };
+
+    console.log("request payload: ", newNote);
+    
 
     try {
       const response = await api.post('notes/', newNote);
@@ -90,14 +98,19 @@ const App = () => {
   };
 
   useEffect(() => {
-    fetchNotes();
-  }, []); // Empty dependency array to run only once on mount
+    console.log('Component mounted');
+    return () => {
+        console.log('Component unmounted');
+    };
+}, []); // Empty dependency array to run only once on mount
 
   return (
     <div className="app-container">
       <form
         className="note-form"
-        onSubmit={(event) => (selectedNote ? handleUpdateNote(event) : handleAddNote(event))}
+        // onSubmit={(event) => (selectedNote ? handleUpdateNote(event) : handleAddNote(event))}
+        onSubmit={(event: React.FormEvent<HTMLFormElement>) => (selectedNote ? handleUpdateNote(event) : handleAddNote(event))}
+
       >
         {selectedNote ? (
           <div className="edit-buttons">
@@ -108,12 +121,14 @@ const App = () => {
           <button type="submit">Add Note</button>
         )}
         <input
+          id = "title"
           value={title}
           onChange={(event) => setTitle(event.target.value)}
           placeholder="Title"
           required
         />
         <textarea
+          id="content"
           value={content}
           onChange={(event) => setContent(event.target.value)}
           placeholder="Content"
